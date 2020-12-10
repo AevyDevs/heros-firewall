@@ -8,10 +8,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerLoginEvent;
-import org.bukkit.event.player.PlayerPreLoginEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.player.*;
 
 import java.util.UUID;
 
@@ -43,8 +40,12 @@ public class Events implements Listener {
     public void on(PlayerLoginEvent event) {
         Player player = event.getPlayer();
         String playerName = player.getName(),
-                address = event.getRealAddress().toString(),
+                address = event.getRealAddress().toString().replace("/", ""),
                 host = event.getRealAddress().getHostAddress();
+
+        if (!event.getResult().equals(PlayerLoginEvent.Result.ALLOWED)) {
+            return;
+        }
 
         if (Storage.getGrantedIPS().contains(address) && Storage.getGrantedIPS().contains(host)) {
             Storage.getOnlinePlayers().add(playerName);
@@ -65,8 +66,16 @@ public class Events implements Listener {
 
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void on(PlayerQuitEvent event) {
+        Player player = event.getPlayer();
+
+        Storage.getOnlinePlayers().remove(player.getName());
+        Storage.getOnlineUUIDs().remove(player.getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    public void on(PlayerKickEvent event) {
         Player player = event.getPlayer();
 
         Storage.getOnlinePlayers().remove(player.getName());
