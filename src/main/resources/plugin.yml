@@ -1,0 +1,4 @@
+name: Firewall
+author: Sorridi
+version: 0.1.0
+main: net.herospvp.firewall.Main
