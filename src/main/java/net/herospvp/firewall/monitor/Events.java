@@ -23,6 +23,10 @@ public class Events implements Listener {
             return;
         }
 
+        if (!event.getLoginResult().equals(AsyncPlayerPreLoginEvent.Result.ALLOWED)) {
+            return;
+        }
+
         event.setLoginResult(AsyncPlayerPreLoginEvent.Result.KICK_OTHER);
         event.setKickMessage(ChatColor.RED + "https://www.youtube.com/watch?v=dQw4w9WgXcQ");
 
